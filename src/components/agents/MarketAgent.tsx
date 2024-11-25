@@ -35,7 +35,7 @@ export function MarketAgent() {
   ];
 
   // Definir la URL base de la API
-  const API_BASE_URL = 'https://ff92-201-218-159-83.ngrok-free.app';
+  const API_BASE_URL = 'https://1a46-201-218-159-83.ngrok-free.app';
 
   const handleSendMessage = async (text?: string) => {
     const messageToSend = text || inputText;
