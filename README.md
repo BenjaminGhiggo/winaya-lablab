@@ -5,3 +5,5 @@ https://github.com/neil-toscano/winaya-lablab
 
 # REPOSITORIO LLAMA 3.2
 [https://github.com/BenjaminGhiggo/api-llama32](https://github.com/BenjaminGhiggo/api-llama32)
+
+If you have a problem logging in with your Google email, please restart the page by logging in again to https://winaya-lablab.vercel.app/
