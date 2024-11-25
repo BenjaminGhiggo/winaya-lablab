@@ -7,7 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Definir la URL base de la API directamente
-const API_BASE_URL = 'https://3939-3-137-199-132.ngrok-free.app';
+const API_BASE_URL = 'https://ff92-201-218-159-83.ngrok-free.app';
 
 export function FinancialAgent() {
   const [messages, setMessages] = useState([
