@@ -1,6 +1,10 @@
+// src/components/agents/MarketingAgent.tsx
+
 import { useState, useEffect, useRef } from 'react';
 import { Paperclip, ArrowUp } from 'lucide-react';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function MarketingAgent() {
   const [messages, setMessages] = useState([
@@ -31,6 +35,9 @@ export function MarketingAgent() {
     '💰 ¿Qué es el ROI?',
   ];
 
+  // Definir la URL base de la API
+  const API_BASE_URL = 'http://localhost:8000';
+
   const handleSendMessage = async (text?: string) => {
     const messageToSend = text || inputText;
 
@@ -51,7 +58,7 @@ export function MarketingAgent() {
     }
 
     // Preparar el payload
-    const payload = {
+    const payload: any = {
       user_input: messageToSend,
       producto: producto || null,
       objetivo: objetivo || null,
@@ -59,9 +66,9 @@ export function MarketingAgent() {
     };
 
     try {
-      const response = await axios.post('https://da0d-18-191-40-129.ngrok-free.app/agente_marketing/', payload, {
+      const response = await axios.post(`${API_BASE_URL}/agente_marketing/`, payload, {
         headers: {
-          'ngrok-skip-browser-warning': 'true', // Encabezado para omitir la advertencia
+          'Content-Type': 'application/json',
         },
       });
 
@@ -77,14 +84,18 @@ export function MarketingAgent() {
       setObjetivo('');
       setPresupuesto('');
       setOriginalMessage('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al enviar el mensaje:', error);
+      if (error.response) {
+        console.error('Detalles del error:', error.response.data);
+      }
       const botMessage = {
         id: Date.now() + 1,
         text: 'Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.',
         isBot: true,
       };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
+      toast.error('Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.');
     } finally {
       setLoading(false);
       setNeedsAdditionalData(false);
@@ -101,7 +112,7 @@ export function MarketingAgent() {
     setNeedsAdditionalData(false);
 
     // Preparar el payload con el mensaje original y los datos adicionales
-    const payload = {
+    const payload: any = {
       user_input: originalMessage,
       producto: producto,
       objetivo: objetivo,
@@ -109,9 +120,9 @@ export function MarketingAgent() {
     };
 
     try {
-      const response = await axios.post('https://da0d-18-191-40-129.ngrok-free.app/agente_marketing/', payload, {
+      const response = await axios.post(`${API_BASE_URL}/agente_marketing/`, payload, {
         headers: {
-          'ngrok-skip-browser-warning': 'true', // Encabezado para omitir la advertencia
+          'Content-Type': 'application/json',
         },
       });
 
@@ -127,14 +138,18 @@ export function MarketingAgent() {
       setObjetivo('');
       setPresupuesto('');
       setOriginalMessage('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al enviar el mensaje:', error);
+      if (error.response) {
+        console.error('Detalles del error:', error.response.data);
+      }
       const botMessage = {
         id: Date.now() + 1,
         text: 'Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.',
         isBot: true,
       };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
+      toast.error('Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -170,7 +185,6 @@ export function MarketingAgent() {
       {/* Header */}
       <div className="flex direction-row bg-white p-4 border-b justify-center gap-2">
         <h1 className="text-xl font-semibold text-black flex justify-center items-center">Agente de Marketing</h1>
-        
       </div>
 
       {/* Chat Messages */}
@@ -293,6 +307,9 @@ export function MarketingAgent() {
           </button>
         </div>
       </div>
+
+      {/* Contenedor de Notificaciones */}
+      <ToastContainer />
     </div>
   );
 }

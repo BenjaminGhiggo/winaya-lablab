@@ -1,6 +1,13 @@
+// src/components/agents/FinancialAgent.tsx
+
 import { useState, useEffect, useRef } from 'react';
 import { ArrowUp, Paperclip } from 'lucide-react';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// Definir la URL base de la API directamente
+const API_BASE_URL = 'http://localhost:8000';
 
 export function FinancialAgent() {
   const [messages, setMessages] = useState([
@@ -25,9 +32,9 @@ export function FinancialAgent() {
   ];
 
   const handleSendMessage = async (text?: string) => {
-    const messageToSend = text || inputText;
+    const messageToSend = text || inputText.trim();
 
-    if (messageToSend.trim() === '') return;
+    if (messageToSend === '') return;
 
     const userMessage = { id: Date.now(), text: messageToSend, isBot: false };
     setMessages([...messages, userMessage]);
@@ -37,26 +44,31 @@ export function FinancialAgent() {
 
     try {
       const response = await axios.post(
-        'https://da0d-18-191-40-129.ngrok-free.app/agente_financiero/',
+        `${API_BASE_URL}/agente_financiero/`,
         {
           user_input: messageToSend,
         },
         {
           headers: {
-            'ngrok-skip-browser-warning': 'true', // Encabezado para omitir la advertencia
+            'Content-Type': 'application/json',
           },
         }
       );
 
-      const botMessage = {
-        id: Date.now() + 1,
-        text: response.data.respuesta || 'Lo siento, no pude obtener una respuesta.',
-        isBot: true,
-      };
-
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-    } catch (error) {
+      // Verificar si response.data es un objeto y tiene la clave 'respuesta'
+      if (response.data && typeof response.data === 'object' && 'respuesta' in response.data) {
+        const botMessage = {
+          id: Date.now() + 1,
+          text: response.data.respuesta || 'Lo siento, no pude obtener una respuesta.',
+          isBot: true,
+        };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+      } else {
+        throw new Error('Respuesta inesperada del servidor.');
+      }
+    } catch (error: any) {
       console.error('Error al enviar el mensaje:', error);
+      toast.error('Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.');
       const botMessage = {
         id: Date.now() + 1,
         text: 'Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.',
@@ -93,6 +105,12 @@ export function FinancialAgent() {
     };
   }, [loading]);
 
+  // Desplazarse al final del chat cuando se agregan nuevos mensajes
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   return (
     <div className="max-w-3xl mx-auto h-[calc(100vh-3.5rem)] flex flex-col">
       {/* Header */}
@@ -101,7 +119,7 @@ export function FinancialAgent() {
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 bg-white overflow-y-auto p-4 space-y-4 h-3/4 gap-3">
+      <div className="flex-1 bg-white overflow-y-auto p-4 space-y-4 h-3/4 gap-3" id="chat-messages">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -109,7 +127,7 @@ export function FinancialAgent() {
           >
             {message.isBot && (
               <img
-                src="https://cdn-icons-png.flaticon.com/512/4598/4598776.png " // Cambia esta URL por la imagen del robot
+                src="https://cdn-icons-png.flaticon.com/512/4598/4598776.png" // Cambia esta URL por la imagen del robot
                 alt="Robot"
                 className="w-12 h-12 mr-1"
               />
@@ -140,7 +158,7 @@ export function FinancialAgent() {
           </div>
         )}
 
-        {/* Suggestions */}
+        {/* Sugerencias */}
         {showSuggestions && (
           <div className="flex flex-wrap gap-2">
             {suggestions.map((suggestion, index) => (
@@ -154,6 +172,8 @@ export function FinancialAgent() {
             ))}
           </div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Footer Input */}
@@ -184,6 +204,9 @@ export function FinancialAgent() {
           </button>
         </div>
       </div>
+
+      {/* Contenedor de Notificaciones */}
+      <ToastContainer />
     </div>
   );
 }

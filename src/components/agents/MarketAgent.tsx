@@ -1,6 +1,10 @@
+// src/components/agents/MarketAgent.tsx
+
 import { useState, useEffect, useRef } from 'react';
 import { ArrowUp, Paperclip } from 'lucide-react';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function MarketAgent() {
   const [messages, setMessages] = useState([
@@ -29,6 +33,9 @@ export function MarketAgent() {
     '🌍 ¿Cuánto impacto tiene la ubicación geográfica en mis ventas?',
     '🛍️ ¿Qué elementos puedo agregar para que mi producto sea más competitivo?',
   ];
+
+  // Definir la URL base de la API
+  const API_BASE_URL = 'http://localhost:8000';
 
   const handleSendMessage = async (text?: string) => {
     const messageToSend = text || inputText;
@@ -66,9 +73,9 @@ export function MarketAgent() {
     }
 
     try {
-      const response = await axios.post('https://da0d-18-191-40-129.ngrok-free.app/agente_mercado/', payload, {
+      const response = await axios.post(`${API_BASE_URL}/agente_mercado/`, payload, {
         headers: {
-          'ngrok-skip-browser-warning': 'true', // Encabezado para omitir la advertencia
+          'Content-Type': 'application/json',
         },
       });
 
@@ -94,6 +101,7 @@ export function MarketAgent() {
         isBot: true,
       };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
+      toast.error('Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.');
     } finally {
       setLoading(false);
       setNeedsAdditionalData(false);
@@ -123,9 +131,9 @@ export function MarketAgent() {
     }
 
     try {
-      const response = await axios.post('https://da0d-18-191-40-129.ngrok-free.app/agente_mercado/', payload, {
+      const response = await axios.post(`${API_BASE_URL}/agente_mercado/`, payload, {
         headers: {
-          'ngrok-skip-browser-warning': 'true', // Encabezado para omitir la advertencia
+          'Content-Type': 'application/json',
         },
       });
 
@@ -151,6 +159,7 @@ export function MarketAgent() {
         isBot: true,
       };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
+      toast.error('Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -186,7 +195,6 @@ export function MarketAgent() {
       {/* Header */}
       <div className="flex direction-row bg-white p-4 border-b justify-center gap-2">
         <h1 className="text-xl font-semibold text-black flex justify-center items-center">Agente de Mercado</h1>
-       
       </div>
 
       {/* Chat Messages */}
@@ -233,34 +241,36 @@ export function MarketAgent() {
         {needsAdditionalData && (
           <div className="p-4 bg-gray-100 rounded-md shadow-md">
             <h2 className="text-lg font-semibold mb-2">Información adicional requerida:</h2>
-            {originalMessage.toLowerCase().includes('precio promedio') && (
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  placeholder="Ingresa la categoría de tu producto"
-                  value={categoria}
-                  onChange={(e) => setCategoria(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-md"
-                />
-              </div>
-            )}
-            {originalMessage.toLowerCase().includes('competitivo') && (
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  placeholder="Ingresa tu ubicación geográfica"
-                  value={ubicacion}
-                  onChange={(e) => setUbicacion(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-md"
-                />
-              </div>
-            )}
-            <button
-              onClick={handleSubmitAdditionalData}
-              className="px-4 py-2 bg-purple-600 text-white rounded-md mt-2"
-            >
-              Enviar
-            </button>
+            <div className="space-y-2">
+              {originalMessage.toLowerCase().includes('precio promedio') && originalMessage.toLowerCase().includes('producto similar') && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Ingresa la categoría de tu producto"
+                    value={categoria}
+                    onChange={(e) => setCategoria(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md"
+                  />
+                </>
+              )}
+              {originalMessage.toLowerCase().includes('competitivo') && originalMessage.toLowerCase().includes('mi zona') && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Ingresa tu ubicación geográfica"
+                    value={ubicacion}
+                    onChange={(e) => setUbicacion(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md"
+                  />
+                </>
+              )}
+              <button
+                onClick={handleSubmitAdditionalData}
+                className="px-4 py-2 bg-purple-600 text-white rounded-md mt-2"
+              >
+                Enviar
+              </button>
+            </div>
           </div>
         )}
 
@@ -308,6 +318,9 @@ export function MarketAgent() {
           </button>
         </div>
       </div>
+
+      {/* Contenedor de Notificaciones */}
+      <ToastContainer />
     </div>
   );
 }
