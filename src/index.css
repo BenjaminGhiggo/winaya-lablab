@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-100;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+/* FullCalendar customization */
+.fc {
+  @apply font-sans;
+}
+
+.fc .fc-toolbar-title {
+  @apply text-xl font-semibold text-gray-800;
+}
+
+.fc .fc-button-primary {
+  @apply bg-pink-500 border-pink-500 hover:bg-pink-600 hover:border-pink-600 focus:bg-pink-600 focus:border-pink-600 active:bg-pink-700 active:border-pink-700;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  @apply bg-pink-50;
+}
+
+.fc .fc-daygrid-day-number {
+  @apply text-sm text-gray-700;
+}
+
+.fc .fc-event {
+  @apply bg-pink-500 border-pink-500 cursor-pointer;
+}
+
+.fc .fc-event-title {
+  @apply text-sm font-medium;
+}@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: rgb(253, 242, 255);
+}
+
+.auth-gradient {
+  background: linear-gradient(to right,#ffa91e, #ec4899);
+}
+
+.auth-gradient2 {
+  background: linear-gradient(to left,#ffa91e, #ec4899);
+}
+
+.auth-container {
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+}

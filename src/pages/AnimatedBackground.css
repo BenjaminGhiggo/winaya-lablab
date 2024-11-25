@@ -1,0 +1,51 @@
+.animated-background {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1; /* Asegura que esté detrás de otros elementos */
+    background: linear-gradient(to bottom right,#eb08b9, #ff6700, #ffcc33, #eb08b9);
+    overflow: hidden;
+  }
+  
+  .animated-background::before,
+  .animated-background::after {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, transparent, #ea07c8 70%);
+    border-radius: 50%;
+    animation: moveBackground 8s infinite linear alternate;
+  }
+  
+  .animated-background::before {
+    top: 10%;
+    left: -20%;
+    background: radial-gradient(circle at top left, #ff7b00, transparent 70%);
+    animation-delay: 0s;
+  }
+  
+  .animated-background::after {
+    top: 50%;
+    left: -30%;
+    background: radial-gradient(circle at bottom right, #d93670, transparent 60%);
+    animation-delay: 4s;
+  }
+  
+  .bg-gradient-to-r {
+    background-size: 200% 200%;
+  }
+  
+  @keyframes moveBackground {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    50% {
+      transform: translate(20px, -20px) rotate(15deg);
+    }
+    100% {
+      transform: translate(-20px, 20px) rotate(-15deg);
+    }
+  }
