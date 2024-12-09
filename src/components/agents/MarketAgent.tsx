@@ -10,7 +10,7 @@ export function MarketAgent() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: '¡Hola! Soy Simone, tu Agente de Mercado. Mi símbolo es el cuy, porque, como este pequeño curioso, siempre estoy explorando cada rincón del mercado. Estoy enfocada en ayudarte a entender las tendencias, analizar a tu competencia y encontrar oportunidades de crecimiento. Soy rápida, observadora y no dejo escapar ni un detalle. ¿Qué descubrimos juntos hoy?',
+      text: '¡Hola! Soy Vale 👋, tu Agente Legal. Estoy aquí para proporcionarte el soporte que necesitas en aspectos legales relacionados con tu emprendimiento. Mi enfoque es ayudarte a formalizar tu negocio, cumplir con las normativas vigentes y resolver cualquier duda legal que puedas tener. Con mi orientación, podrás construir una base sólida y segura para el crecimiento de tu empresa. ¿En qué puedo asistirte hoy?',
       isBot: true,
     },
   ]);
@@ -28,10 +28,9 @@ export function MarketAgent() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const suggestions = [
-    '📊 ¿Qué tan competitivo es mi producto en mi zona?',
-    '🎯 ¿Qué días y horarios son mejores para vender mis productos?',
-    '🌍 ¿Cuánto impacto tiene la ubicación geográfica en mis ventas?',
-    '🛍️ ¿Qué elementos puedo agregar para que mi producto sea más competitivo?',
+    '🛡️ ¿Qué licencias o permisos son obligatorios para mi tipo de negocio?' ,
+    '📜 ¿Qué pasos debo seguir para registrar formalmente mi negocio en Perú?',
+    '🏖️ ¿Cómo manejo beneficios y derechos laborales de mis colaboradores según la ley peruana?',
   ];
 
   // Definir la URL base de la API
@@ -194,7 +193,7 @@ export function MarketAgent() {
     <div className="max-w-3xl mx-auto h-[calc(100vh-3.5rem)] flex flex-col">
       {/* Header */}
       <div className="flex direction-row bg-white p-4 border-b justify-center gap-2">
-        <h1 className="text-xl font-semibold text-black flex justify-center items-center">Agente de Mercado</h1>
+        <h1 className="text-xl font-semibold text-black flex justify-center items-center">Agente Legal</h1>
       </div>
 
       {/* Chat Messages */}
@@ -206,7 +205,7 @@ export function MarketAgent() {
           >
             {message.isBot && (
               <img
-                src="https://cdn-icons-png.flaticon.com/512/311/311528.png" // Cambia esta URL por la imagen del robot
+                src="https://i.pinimg.com/736x/97/57/53/975753493e4e229edc13645fc4c8105b.jpg" // Cambia esta URL por la imagen del robot
                 alt="Robot"
                 className="w-12 h-12 mr-1"
               />
@@ -294,7 +293,7 @@ export function MarketAgent() {
       <div className="p-3 border-3 bg-pink-200 mx-4 rounded-3xl border-transparent hover:border-3 hover:border-pink-500 transition-all">
         <div className="relative flex items-center gap-3">
           <textarea
-            placeholder="Envía un mensaje a Simone"
+            placeholder="Envía un mensaje a Vale"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}

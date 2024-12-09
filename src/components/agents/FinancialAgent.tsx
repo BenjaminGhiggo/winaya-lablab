@@ -13,7 +13,7 @@ export function FinancialAgent() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: '¡Hola! Soy Marie 👋, tu Agente Financiera, y aunque no tengo cuerdas como un quipu, estoy aquí para desatar todos los nudos de tus finanzas. ¿Necesitas ordenar tu presupuesto, planear inversiones o encontrar formas de hacer crecer tu negocio? ¡No te preocupes, yo me encargo! ¿Por dónde empezamos?',
+      text: '¡Hola! Soy Mari 👋, tu Agente Financiera, y aunque no tengo cuerdas como un quipu, estoy aquí para desatar todos los nudos de tus finanzas. ¿Necesitas ordenar tu presupuesto, planear inversiones o encontrar formas de hacer crecer tu negocio? ¡No te preocupes, yo me encargo! ¿Por dónde empezamos?',
       isBot: true,
     },
   ]);

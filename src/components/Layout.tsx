@@ -23,7 +23,7 @@ export function Layout({ children }: LayoutProps) {
   const agents = [
     { title: 'Agente Financiero', path: '/agent/financial' },
     { title: 'Agente de Marketing', path: '/agent/marketing' },
-    { title: 'Agente de Mercado', path: '/agent/market' },
+    { title: 'Agente Legal', path: '/agent/market' },
   ];
 
   const { profilePicture } = useStore(useShallow((state) => ({
