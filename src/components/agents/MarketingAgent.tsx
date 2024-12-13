@@ -5,6 +5,7 @@ import { Paperclip, ArrowUp } from 'lucide-react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PropTypes from 'prop-types';
 
 export function MarketingAgent() {
   const [messages, setMessages] = useState([
@@ -28,19 +29,36 @@ export function MarketingAgent() {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Respuestas predefinidas a sugerencias
+  const suggestionResponses: { [key: string]: string } = {
+    '💡 ¿Puedes crearme una campaña de marketing?': 'Claro, puedo ayudarte a crear una campaña efectiva. Por favor, dame detalles sobre tu producto, objetivo y presupuesto.',
+    '🎯 ¿Cómo puedo atraer más clientes sin gastar dinero?': 'Puedes aprovechar el marketing de contenido, publicaciones regulares en redes sociales y colaboraciones con influencers dispuestos a intercambios.',
+    '📢 ¿Qué tipo de anuncios funcionan mejor en redes sociales?': 'Los anuncios que muestran resultados concretos, incluyen testimonios y tienen llamados a la acción claros, como "Aprende habilidades prácticas en 3 días", funcionan mejor.',
+    '💰 ¿Qué es el ROI?': 'El ROI (Retorno de la Inversión) es una métrica que mide el beneficio obtenido en relación al costo de tu inversión en marketing.',
+    '¿Qué tipo de anuncios funcionan mejor para talleres educativos?': 'Los anuncios que muestran resultados concretos, incluyen testimonios y tienen llamados a la acción claros, como "Aprende habilidades prácticas en 3 días", funcionan mejor.',
+    '¿Cómo puedo utilizar testimonios de clientes para aumentar mi credibilidad?': 'Destaca testimonios en tu sitio web, redes sociales y anuncios, mostrando resultados específicos y auténticos para generar confianza.',
+    '¿Qué redes sociales me recomiendas usar para promover mis servicios?': 'Facebook, Instagram y LinkedIn son ideales porque permiten segmentar audiencias y llegar a padres y educadores.',
+    '¿Cómo uso historias y reels en Instagram para captar atención?': 'Crea videos cortos mostrando beneficios del taller, tips rápidos o testimonios para captar la atención de tu audiencia.',
+    '¿Qué tipo de publicaciones atraen a padres y educadores?': 'Publicaciones que ofrezcan consejos prácticos, actividades educativas y testimonios sobre el impacto positivo del taller.'
+  };
+
   const suggestions = [
     '💡 ¿Puedes crearme una campaña de marketing?',
     '🎯 ¿Cómo puedo atraer más clientes sin gastar dinero?',
     '📢 ¿Qué tipo de anuncios funcionan mejor en redes sociales?',
     '💰 ¿Qué es el ROI?',
+    '¿Qué tipo de anuncios funcionan mejor para talleres educativos?',
+    '¿Cómo puedo utilizar testimonios de clientes para aumentar mi credibilidad?',
+    '¿Qué redes sociales me recomiendas usar para promover mis servicios?',
+    '¿Cómo uso historias y reels en Instagram para captar atención?',
+    '¿Qué tipo de publicaciones atraen a padres y educadores?'
   ];
 
-  // Definir la URL base de la API
+  // Definir la URL base de la API (esta puede ser tu URL real)
   const API_BASE_URL = 'https://1a46-201-218-159-83.ngrok-free.app';
 
   const handleSendMessage = async (text?: string) => {
     const messageToSend = text || inputText;
-
     if (messageToSend.trim() === '') return;
 
     const userMessage = { id: Date.now(), text: messageToSend, isBot: false };
@@ -156,7 +174,19 @@ export function MarketingAgent() {
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    handleSendMessage(suggestion);
+    // Agregar el mensaje del usuario
+    const userMessage = { id: Date.now(), text: suggestion, isBot: false };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+    // Simular la respuesta predefinida del bot
+    const botMessage = {
+      id: Date.now() + 1,
+      text: suggestionResponses[suggestion] || 'Lo siento, no tengo una respuesta para eso.',
+      isBot: true,
+    };
+    setMessages((prevMessages) => [...prevMessages, botMessage]);
+
+    setShowSuggestions(false); // Ocultar las sugerencias al seleccionar una
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -196,7 +226,7 @@ export function MarketingAgent() {
           >
             {message.isBot && (
               <img
-                src="https://i.pinimg.com/736x/45/ae/10/45ae101f8a4a21b2c249e88f52602a6c.jpg" // Cambia esta URL por la imagen del robot
+                src="https://i.pinimg.com/736x/45/ae/10/45ae101f8a4a21b2c249e88f52602a6c.jpg"
                 alt="Robot"
                 className="w-12 h-12 mr-1"
               />
@@ -313,3 +343,6 @@ export function MarketingAgent() {
     </div>
   );
 }
+
+// Declaración de PropTypes (aunque no se utilizan props en el componente)
+MarketingAgent.propTypes = {};
