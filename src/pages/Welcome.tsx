@@ -29,9 +29,9 @@ export default function Welcome() {
             <h2 className="text-xl font-semibold text-gray-800">
             Donde las emprendedoras hacen historia.
             </h2>
-            <p className="text-gray-600">
+            {/* <p className="text-gray-600">
               Muestra tus productos, aprende y crece con nosotras.
-            </p>
+            </p> */}
           </div>
 
           <button
