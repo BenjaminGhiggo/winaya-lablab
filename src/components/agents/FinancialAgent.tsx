@@ -1,4 +1,3 @@
-
 // src/components/agents/FinancialAgent.tsx
 
 import { useState, useEffect, useRef } from 'react';
@@ -6,9 +5,7 @@ import { ArrowUp, Paperclip } from 'lucide-react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-// Definir la URL base de la API directamente
-const API_BASE_URL = 'https://3939-3-137-199-132.ngrok-free.app';
+import PropTypes from 'prop-types';
 
 export function FinancialAgent() {
   const [messages, setMessages] = useState([
@@ -25,12 +22,42 @@ export function FinancialAgent() {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Respuestas predefinidas a sugerencias
+  const suggestionResponses: { [key: string]: string } = {
+    '🐖 ¿Cómo puedo ahorrar más dinero?':
+      'Para ahorrar más dinero, crea un presupuesto mensual, reduce gastos innecesarios y establece metas de ahorro claras. Considera automatizar tus ahorros para asegurar que se realicen regularmente.',
+    '📈 ¿Qué es un fondo de inversión?':
+      'Un fondo de inversión es un vehículo que agrupa el dinero de varios inversores para comprar una cartera diversificada de activos, como acciones, bonos o bienes raíces, gestionado por profesionales.',
+    '📝 ¿Cómo crear un presupuesto efectivo?':
+      'Para crear un presupuesto efectivo, identifica tus ingresos y gastos, categoriza tus gastos en esenciales y no esenciales, establece límites para cada categoría y revisa tu presupuesto regularmente para ajustarlo según sea necesario.',
+    '📊 ¿Cuáles son las mejores opciones de financiamiento?':
+      'Las mejores opciones de financiamiento dependen de tus necesidades específicas. Puedes considerar préstamos bancarios, líneas de crédito, financiamiento a través de inversionistas, o plataformas de crowdfunding según el tipo y tamaño de tu proyecto.',
+    '¿Cómo puedo mejorar mi puntaje crediticio?':
+      'Paga tus deudas a tiempo, evita utilizar más del 30% de tu línea de crédito disponible y revisa tu historial crediticio para corregir errores.',
+    '¿Qué estrategias puedo usar para reducir mis deudas rápidamente?':
+      'Usa el método bola de nieve (paga primero las deudas pequeñas) o avalancha (paga primero las deudas con mayor interés), y destina un porcentaje fijo de tus ingresos para pagos extras.',
+    '¿Qué tipos de inversión me recomiendas si tengo un perfil conservador?':
+      'Considera opciones de bajo riesgo como bonos del gobierno, certificados de depósito (CD) o fondos indexados diversificados.',
+    '¿Cómo funciona el interés compuesto y cómo puedo aprovecharlo?':
+      'El interés compuesto genera ganancias sobre las ganancias previas. Inicia inversiones a largo plazo y reinvierte los rendimientos para maximizar el efecto compuesto.',
+    '¿Cuáles son los errores financieros más comunes y cómo evitarlos?':
+      'No presupuestar, gastar más de lo que ganas y no ahorrar para emergencias son errores frecuentes. Planifica tus finanzas, controla tus gastos y establece un fondo de emergencia.',
+  };
+
   const suggestions = [
     '🐖 ¿Cómo puedo ahorrar más dinero?',
     '📈 ¿Qué es un fondo de inversión?',
     '📝 ¿Cómo crear un presupuesto efectivo?',
     '📊 ¿Cuáles son las mejores opciones de financiamiento?',
+    '¿Cómo puedo mejorar mi puntaje crediticio?',
+    '¿Qué estrategias puedo usar para reducir mis deudas rápidamente?',
+    '¿Qué tipos de inversión me recomiendas si tengo un perfil conservador?',
+    '¿Cómo funciona el interés compuesto y cómo puedo aprovecharlo?',
+    '¿Cuáles son los errores financieros más comunes y cómo evitarlos?',
   ];
+
+  // Definir la URL base de la API
+  const API_BASE_URL = 'https://3939-3-137-199-132.ngrok-free.app';
 
   const handleSendMessage = async (text?: string) => {
     const messageToSend = text || inputText.trim();
@@ -38,34 +65,50 @@ export function FinancialAgent() {
     if (messageToSend === '') return;
 
     const userMessage = { id: Date.now(), text: messageToSend, isBot: false };
-    setMessages([...messages, userMessage]);
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
     setInputText('');
     setLoading(true);
     setShowSuggestions(false);
 
+    // Simular una respuesta de carga
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/agente_financiero/`,
-        {
-          user_input: messageToSend,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      // Verificar si response.data es un objeto y tiene la clave 'respuesta'
-      if (response.data && typeof response.data === 'object' && 'respuesta' in response.data) {
+      // Verificar si el mensaje enviado es una de las sugerencias predefinidas
+      if (suggestionResponses[messageToSend]) {
         const botMessage = {
           id: Date.now() + 1,
-          text: response.data.respuesta || 'Lo siento, no pude obtener una respuesta.',
+          text: suggestionResponses[messageToSend],
           isBot: true,
         };
-        setMessages((prevMessages) => [...prevMessages, botMessage]);
+        // Simular un pequeño retraso para la respuesta
+        setTimeout(() => {
+          setMessages((prevMessages) => [...prevMessages, botMessage]);
+          setLoading(false);
+        }, 1000);
       } else {
-        throw new Error('Respuesta inesperada del servidor.');
+        // Si no es una sugerencia predefinida, realizar una llamada a la API
+        const response = await axios.post(
+          `${API_BASE_URL}/agente_financiero/`,
+          {
+            user_input: messageToSend,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        // Verificar si response.data es un objeto y tiene la clave 'respuesta'
+        if (response.data && typeof response.data === 'object' && 'respuesta' in response.data) {
+          const botMessage = {
+            id: Date.now() + 1,
+            text: response.data.respuesta || 'Lo siento, no pude obtener una respuesta.',
+            isBot: true,
+          };
+          setMessages((prevMessages) => [...prevMessages, botMessage]);
+        } else {
+          throw new Error('Respuesta inesperada del servidor.');
+        }
       }
     } catch (error: any) {
       console.error('Error al enviar el mensaje:', error);
@@ -82,7 +125,24 @@ export function FinancialAgent() {
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    handleSendMessage(suggestion);
+    // Agregar el mensaje del usuario
+    const userMessage = { id: Date.now(), text: suggestion, isBot: false };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+    // Simular la respuesta predefinida del bot
+    const botMessage = {
+      id: Date.now() + 1,
+      text: suggestionResponses[suggestion] || 'Lo siento, no tengo una respuesta para eso.',
+      isBot: true,
+    };
+
+    // Simular un pequeño retraso para la respuesta
+    setTimeout(() => {
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
+      setLoading(false);
+    }, 1000);
+
+    setShowSuggestions(false); // Ocultar las sugerencias al seleccionar una
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -128,8 +188,8 @@ export function FinancialAgent() {
           >
             {message.isBot && (
               <img
-                src="https://cdn-icons-png.flaticon.com/512/4598/4598776.png" // Cambia esta URL por la imagen del robot
-                alt="Robot"
+                src="https://cdn-icons-png.flaticon.com/512/4598/4598776.png" // Cambia esta URL por la imagen del agente financiero
+                alt="Agente Financiero"
                 className="w-12 h-12 mr-1"
               />
             )}
@@ -145,7 +205,7 @@ export function FinancialAgent() {
             {!message.isBot && (
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBD_ykDcG8TKeoMNSGsF88UYXjqjx3ZCeX-g&s"
-                alt="User"
+                alt="Usuario"
                 className="w-10 h-10 rounded-full border-2 border-purple-500 ml-3"
               />
             )}
@@ -181,7 +241,7 @@ export function FinancialAgent() {
       <div className="p-3 border-3 bg-pink-200 mx-4 rounded-3xl border-transparent hover:border-3 hover:border-pink-500 transition-all">
         <div className="relative flex items-center gap-3">
           <textarea
-            placeholder="Envía un mensaje a Marie"
+            placeholder="Envía un mensaje a Mari"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -195,7 +255,7 @@ export function FinancialAgent() {
             }}
           />
           <button>
-            <Paperclip className="w-5 h5" />
+            <Paperclip className="w-5 h-5" />
           </button>
           <button
             onClick={() => handleSendMessage()} // Llama a la función sin argumentos
@@ -212,3 +272,5 @@ export function FinancialAgent() {
   );
 }
 
+// Declaración de PropTypes (aunque no se utilizan props en el componente)
+FinancialAgent.propTypes = {};
