@@ -2,8 +2,8 @@ import { ReactNode, useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Store, Calendar, MessageCircle, Bell, MessageSquare, Bot, User, LogOut } from 'lucide-react';
 import NotificationsDropdown from './Notifications/NotificationsDropdown';
-import { auth } from '../lib/firebase';
-import { signOut } from 'firebase/auth';
+/* import { auth } from '../lib/firebase';
+import { signOut } from 'firebase/auth'; */
 import useStore from './store/login.store';
 import { useShallow } from 'zustand/react/shallow'
 
@@ -47,14 +47,14 @@ export function Layout({ children }: LayoutProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSignOut = async () => {
+  /* const handleSignOut = async () => {
     try {
       await signOut(auth);
       navigate('/auth/login');
     } catch (error) {
       console.error('Error signing out:', error);
     }
-  };
+  }; */
 
   return (
     <div className="min-h-screen bg-white">
@@ -130,54 +130,59 @@ export function Layout({ children }: LayoutProps) {
               </button>
               {isProfileDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1">
-                  <button
-                    onClick={() => {
-                      navigate('/profile');
-                      setIsProfileDropdownOpen(false);
-                    }}
-                    className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-gray-50 hover:text-pink-500"
-                  >
-                    <User className="w-5 h-5 text-gray-600 hover:text-pink-500" />
-                    <span>Ver perfil</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate('/store');
-                      setIsProfileDropdownOpen(false);
-                    }}
-                    className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-gray-50 hover:text-pink-500"
-                  >
-                    <Store className="w-6 h-6 text-gray-600 cursor-pointer hover:text-pink-500" />
-                    <span>Tienda</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate('/forum');
-                      setIsProfileDropdownOpen(false);
-                    }}
-                    className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-gray-50 hover:text-pink-500"
-                  >
-                    <MessageSquare className="w-6 h-6 text-gray-600 cursor-pointer hover:text-pink-500" />
-                    <span>Foro</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate('/chat');
-                      setIsProfileDropdownOpen(false);
-                    }}
-                    className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-gray-50  hover:text-pink-500"
-                  >
-                    <MessageCircle className="w-5 h-5 text-gray-600 hover:text-pink-500" />
-                    <span>Mensajes</span>
-                  </button>
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-red-50 text-red-600"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    <span>Salir</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => {
+                    navigate('/profile');
+                    setIsProfileDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-gray-50 hover:text-pink-500"
+                >
+                  <User className="w-5 h-5 text-gray-600 hover:text-pink-500" />
+                  <span>Ver perfil</span>
+                </button>
+              
+                <button
+                  onClick={() => {
+                    navigate('/store');
+                    setIsProfileDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-gray-50 hover:text-pink-500"
+                >
+                  <Store className="w-6 h-6 text-gray-600 cursor-pointer hover:text-pink-500" />
+                  <span>Tienda</span>
+                </button>
+              
+                <button
+                  onClick={() => {
+                    navigate('/forum');
+                    setIsProfileDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-gray-50 hover:text-pink-500"
+                >
+                  <MessageSquare className="w-6 h-6 text-gray-600 cursor-pointer hover:text-pink-500" />
+                  <span>Foro</span>
+                </button>
+              
+                <button
+                  onClick={() => {
+                    navigate('/chat');
+                    setIsProfileDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-gray-50 hover:text-pink-500"
+                >
+                  <MessageCircle className="w-5 h-5 text-gray-600 hover:text-pink-500" />
+                  <span>Mensajes</span>
+                </button>
+              
+                {/* Botón Salir corregido */}
+                <button
+                  onClick={() => {}} // Función vacía temporal
+                  className="w-full px-4 py-2 text-left flex items-center gap-3 hover:bg-red-50 text-red-600"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Salir</span>
+                </button>
+              </div>
               )}
             </div>
           </div>

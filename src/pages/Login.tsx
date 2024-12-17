@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+// import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+// import { auth } from '../lib/firebase';
 import { AuthLayout } from '../components/AuthLayout';
 import { AuthInput } from '../components/AuthInput';
-import axios from 'axios';
-import  useStore  from '../components/store/login.store';
+// import axios from 'axios';
+// import useStore from '../components/store/login.store';
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -15,44 +15,23 @@ export const Login = () => {
   });
   const [error, setError] = useState('');
 
+  // Manejar cambios en los campos
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  // Simulación de inicio de sesión (desactivado Firebase)
+  const handleEmailLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await signInWithEmailAndPassword(auth, formData.email, formData.password);
-      navigate('/'); // Updated to redirect to WINAYA
-    } catch (error) {
-      setError('Credenciales inválidas. Por favor, intenta de nuevo.');
-    }
+    // Desactivamos Firebase Auth y permitimos acceso directo
+    console.log("Acceso directo permitido. No se validan credenciales.");
+    navigate('/'); // Redirige a la página principal sin validar
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result: any = await signInWithPopup(auth, provider);
-      const urlBack = import.meta.env.VITE_BASE_URL;
-      const { data } = await axios.post(`${urlBack}api/auth/social-login`, {
-        fullName: result.user.displayName,
-        email: result.user.email,
-      });
-
-      localStorage.setItem('token', data.token);
-      const updateProfile = useStore.getState().updateProfile;
-      updateProfile({
-        fullName: data.user.fullName || '',
-        profilePicture: data.user.profilePicture ||  '',
-        email: data.user.email || '',
-        bio: data.user.bio || '',
-        id: data.user.id || '',
-      });
-
-      navigate('/'); // Updated to redirect to WINAYA
-    } catch (error) {
-      setError('Error al iniciar sesión con Google. Por favor, intenta de nuevo.');
-    }
+  const handleGoogleLogin = () => {
+    // Desactivamos inicio de sesión con Google
+    console.log("Acceso directo permitido con Google Login simulado.");
+    navigate('/'); // Redirige a la página principal sin validar
   };
 
   return (
@@ -75,14 +54,14 @@ export const Login = () => {
           value={formData.password}
           onChange={handleChange}
         />
-        
+
         {error && (
           <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
         )}
 
         <button
           type="submit"
-          className="w-full py-3 rounded-lg text-white font-medium auth-gradient mb-4  hover:bg-auth-gradient2 transition-ease duration-30"
+          className="w-full py-3 rounded-lg text-white font-medium auth-gradient mb-4 hover:bg-auth-gradient2 transition-ease duration-30"
         >
           Iniciar Sesión
         </button>
