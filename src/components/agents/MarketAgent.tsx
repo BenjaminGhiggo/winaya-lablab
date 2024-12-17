@@ -5,6 +5,7 @@ import { ArrowUp, Paperclip } from 'lucide-react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+// import PropTypes from 'prop-types';
 
 export function MarketAgent() {
   const [messages, setMessages] = useState([
@@ -19,153 +20,123 @@ export function MarketAgent() {
   const [dots, setDots] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(true);
 
-  // Variables de estado para datos adicionales y mensaje original
-  const [needsAdditionalData, setNeedsAdditionalData] = useState(false);
-  const [categoria, setCategoria] = useState('');
-  const [ubicacion, setUbicacion] = useState('');
-  const [originalMessage, setOriginalMessage] = useState('');
+  // Variables de estado para datos adicionales y mensaje original (si es necesario en el futuro)
+  // Actualmente, no se requieren datos adicionales para las preguntas proporcionadas
+  // const [needsAdditionalData, setNeedsAdditionalData] = useState(false);
+  // const [categoria, setCategoria] = useState('');
+  // const [ubicacion, setUbicacion] = useState('');
+  // const [originalMessage, setOriginalMessage] = useState('');
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Respuestas predefinidas a sugerencias
+  const suggestionResponses: { [key: string]: string } = {
+    '🛡️ ¿Qué licencias o permisos son obligatorios para mi tipo de negocio?':
+      'Dependerá del tipo de actividad que realices. Por ejemplo, negocios en gastronomía necesitan permisos de salubridad, mientras que una tienda requiere licencia de funcionamiento municipal. Consulta con tu municipio para más detalles.',
+    '📜 ¿Qué pasos debo seguir para registrar formalmente mi negocio en Perú?':
+      'Primero, define el tipo de empresa (persona natural o jurídica). Luego, realiza la búsqueda de nombre en SUNARP, registra tu empresa en SUNAT, obtén una licencia de funcionamiento y, si aplica, inscribe a tus trabajadores en ESSALUD.',
+    '🏖️ ¿Cómo manejo beneficios y derechos laborales de mis colaboradores según la ley peruana?':
+      'Asegúrate de otorgar beneficios como gratificaciones, CTS y vacaciones, además de respetar la jornada laboral máxima de 48 horas semanales. Consulta la Ley de Productividad y Competitividad Laboral para más detalles.',
+    '📄 ¿Cómo redacto un contrato laboral válido?':
+      'Incluye la identificación de las partes, tipo de contrato (temporal, indeterminado), funciones específicas, salario, horario y beneficios. Asegúrate de que ambas partes firmen y que cumpla con las normas de la ley laboral vigente.',
+    '📑 ¿Qué debo incluir en los términos y condiciones de mi negocio?':
+      'Define el uso permitido de tus servicios, políticas de privacidad, condiciones de pago, devoluciones, garantías y limitaciones de responsabilidad. Esto protege legalmente a tu negocio frente a clientes o usuarios.',
+  };
+
   const suggestions = [
-    '🛡️ ¿Qué licencias o permisos son obligatorios para mi tipo de negocio?' ,
+    '🛡️ ¿Qué licencias o permisos son obligatorios para mi tipo de negocio?',
     '📜 ¿Qué pasos debo seguir para registrar formalmente mi negocio en Perú?',
     '🏖️ ¿Cómo manejo beneficios y derechos laborales de mis colaboradores según la ley peruana?',
+    '📄 ¿Cómo redacto un contrato laboral válido?',
+    '📑 ¿Qué debo incluir en los términos y condiciones de mi negocio?',
   ];
 
   // Definir la URL base de la API
   const API_BASE_URL = 'https://1a46-201-218-159-83.ngrok-free.app';
 
   const handleSendMessage = async (text?: string) => {
-    const messageToSend = text || inputText;
+    const messageToSend = text || inputText.trim();
 
-    if (messageToSend.trim() === '') return;
+    if (messageToSend === '') return;
 
     const userMessage = { id: Date.now(), text: messageToSend, isBot: false };
-    setMessages([...messages, userMessage]);
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
     setInputText('');
     setLoading(true);
     setShowSuggestions(false);
 
-    // Determinar si se necesitan datos adicionales
-    if (
-      (messageToSend.toLowerCase().includes('precio promedio') && messageToSend.toLowerCase().includes('producto similar')) ||
-      (messageToSend.toLowerCase().includes('competitivo') && messageToSend.toLowerCase().includes('mi zona'))
-    ) {
-      setNeedsAdditionalData(true);
-      setOriginalMessage(messageToSend); // Guardar el mensaje original
-      setLoading(false);
-      return;
-    }
-
-    // Preparar el payload sin campos vacíos
-    const payload: any = {
-      user_input: messageToSend,
-    };
-
-    if (categoria && categoria.trim() !== '') {
-      payload.categoria = categoria;
-    }
-
-    if (ubicacion && ubicacion.trim() !== '') {
-      payload.ubicacion = ubicacion;
-    }
-
     try {
-      const response = await axios.post(`${API_BASE_URL}/agente_mercado/`, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // Verificar si el mensaje enviado es una de las sugerencias predefinidas
+      if (suggestionResponses[messageToSend]) {
+        const botMessage = {
+          id: Date.now() + 1,
+          text: suggestionResponses[messageToSend],
+          isBot: true,
+        };
+        // Simular un pequeño retraso para la respuesta
+        setTimeout(() => {
+          setMessages((prevMessages) => [...prevMessages, botMessage]);
+          setLoading(false);
+        }, 1000);
+      } else {
+        // Si no es una sugerencia predefinida, realizar una llamada a la API
+        const response = await axios.post(
+          `${API_BASE_URL}/agente_mercado/`,
+          {
+            user_input: messageToSend,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
-      const botMessage = {
-        id: Date.now() + 1,
-        text: response.data.respuesta || 'Lo siento, no pude obtener una respuesta.',
-        isBot: true,
-      };
-
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-      // Resetear datos adicionales
-      setCategoria('');
-      setUbicacion('');
-      setOriginalMessage('');
+        // Verificar si response.data es un objeto y tiene la clave 'respuesta'
+        if (response.data && typeof response.data === 'object' && 'respuesta' in response.data) {
+          const botMessage = {
+            id: Date.now() + 1,
+            text: response.data.respuesta || 'Lo siento, no pude obtener una respuesta.',
+            isBot: true,
+          };
+          setMessages((prevMessages) => [...prevMessages, botMessage]);
+        } else {
+          throw new Error('Respuesta inesperada del servidor.');
+        }
+      }
     } catch (error: any) {
       console.error('Error al enviar el mensaje:', error);
-      if (error.response) {
-        console.error('Detalles del error:', error.response.data);
-      }
+      toast.error('Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.');
       const botMessage = {
         id: Date.now() + 1,
         text: 'Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.',
         isBot: true,
       };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
-      toast.error('Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.');
-    } finally {
-      setLoading(false);
-      setNeedsAdditionalData(false);
-    }
-  };
-
-  const handleSubmitAdditionalData = async () => {
-    if ((categoria.trim() === '' && ubicacion.trim() === '') || !originalMessage) {
-      alert('Por favor, proporciona la información solicitada.');
-      return;
-    }
-
-    setLoading(true);
-    setNeedsAdditionalData(false);
-
-    // Preparar el payload con el mensaje original y los datos adicionales
-    const payload: any = {
-      user_input: originalMessage,
-    };
-
-    if (categoria && categoria.trim() !== '') {
-      payload.categoria = categoria;
-    }
-
-    if (ubicacion && ubicacion.trim() !== '') {
-      payload.ubicacion = ubicacion;
-    }
-
-    try {
-      const response = await axios.post(`${API_BASE_URL}/agente_mercado/`, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const botMessage = {
-        id: Date.now() + 1,
-        text: response.data.respuesta || 'Lo siento, no pude obtener una respuesta.',
-        isBot: true,
-      };
-
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-      // Resetear datos adicionales
-      setCategoria('');
-      setUbicacion('');
-      setOriginalMessage('');
-    } catch (error: any) {
-      console.error('Error al enviar el mensaje:', error);
-      if (error.response) {
-        console.error('Detalles del error:', error.response.data);
-      }
-      const botMessage = {
-        id: Date.now() + 1,
-        text: 'Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.',
-        isBot: true,
-      };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
-      toast.error('Hubo un error al procesar tu solicitud. Por favor, intenta nuevamente.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    handleSendMessage(suggestion);
+    // Agregar el mensaje del usuario
+    const userMessage = { id: Date.now(), text: suggestion, isBot: false };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+    // Simular la respuesta predefinida del bot
+    const botMessage = {
+      id: Date.now() + 1,
+      text: suggestionResponses[suggestion] || 'Lo siento, no tengo una respuesta para eso.',
+      isBot: true,
+    };
+
+    // Simular un pequeño retraso para la respuesta
+    setTimeout(() => {
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
+      setLoading(false);
+    }, 1000);
+
+    setShowSuggestions(false); // Ocultar las sugerencias al seleccionar una
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -189,6 +160,12 @@ export function MarketAgent() {
     };
   }, [loading]);
 
+  // Desplazarse al final del chat cuando se agregan nuevos mensajes
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   return (
     <div className="max-w-3xl mx-auto h-[calc(100vh-3.5rem)] flex flex-col">
       {/* Header */}
@@ -197,7 +174,7 @@ export function MarketAgent() {
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 bg-white overflow-y-auto p-4 space-y-4 h-3/4 gap-3">
+      <div className="flex-1 bg-white overflow-y-auto p-4 space-y-4 h-3/4 gap-3" id="chat-messages">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -205,8 +182,8 @@ export function MarketAgent() {
           >
             {message.isBot && (
               <img
-                src="https://i.pinimg.com/736x/97/57/53/975753493e4e229edc13645fc4c8105b.jpg" // Cambia esta URL por la imagen del robot
-                alt="Robot"
+                src="https://i.pinimg.com/736x/97/57/53/975753493e4e229edc13645fc4c8105b.jpg" // Cambia esta URL por la imagen del agente legal
+                alt="Agente Legal"
                 className="w-12 h-12 mr-1"
               />
             )}
@@ -222,7 +199,7 @@ export function MarketAgent() {
             {!message.isBot && (
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBD_ykDcG8TKeoMNSGsF88UYXjqjx3ZCeX-g&s"
-                alt="User"
+                alt="Usuario"
                 className="w-10 h-10 rounded-full border-2 border-purple-500 ml-3"
               />
             )}
@@ -232,43 +209,6 @@ export function MarketAgent() {
           <div className="flex justify-start">
             <div className="max-w-[80%] rounded-lg px-4 py-2 bg-plomo-chat text-black-400 shadow-md">
               <p>Consultando{dots}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Formulario para datos adicionales */}
-        {needsAdditionalData && (
-          <div className="p-4 bg-gray-100 rounded-md shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Información adicional requerida:</h2>
-            <div className="space-y-2">
-              {originalMessage.toLowerCase().includes('precio promedio') && originalMessage.toLowerCase().includes('producto similar') && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Ingresa la categoría de tu producto"
-                    value={categoria}
-                    onChange={(e) => setCategoria(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                </>
-              )}
-              {originalMessage.toLowerCase().includes('competitivo') && originalMessage.toLowerCase().includes('mi zona') && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Ingresa tu ubicación geográfica"
-                    value={ubicacion}
-                    onChange={(e) => setUbicacion(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                </>
-              )}
-              <button
-                onClick={handleSubmitAdditionalData}
-                className="px-4 py-2 bg-purple-600 text-white rounded-md mt-2"
-              >
-                Enviar
-              </button>
             </div>
           </div>
         )}
@@ -287,6 +227,8 @@ export function MarketAgent() {
             ))}
           </div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Footer Input */}
@@ -307,7 +249,7 @@ export function MarketAgent() {
             }}
           />
           <button>
-            <Paperclip className="w-5 h5" />
+            <Paperclip className="w-5 h-5" />
           </button>
           <button
             onClick={() => handleSendMessage()} // Llama a la función sin argumentos
@@ -323,3 +265,6 @@ export function MarketAgent() {
     </div>
   );
 }
+
+// Declaración de PropTypes (aunque no se utilizan props en el componente)
+MarketAgent.propTypes = {};
