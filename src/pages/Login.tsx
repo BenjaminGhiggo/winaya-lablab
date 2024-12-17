@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-// import { auth } from '../lib/firebase';
 import { AuthLayout } from '../components/AuthLayout';
 import { AuthInput } from '../components/AuthInput';
-// import axios from 'axios';
-// import useStore from '../components/store/login.store';
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -20,18 +16,16 @@ export const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Simulación de inicio de sesión (desactivado Firebase)
+  // Simulación de inicio de sesión (sin autenticación)
   const handleEmailLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Desactivamos Firebase Auth y permitimos acceso directo
     console.log("Acceso directo permitido. No se validan credenciales.");
-    navigate('/'); // Redirige a la página principal sin validar
+    navigate('/feed'); // Redirige directamente al feed
   };
 
   const handleGoogleLogin = () => {
-    // Desactivamos inicio de sesión con Google
     console.log("Acceso directo permitido con Google Login simulado.");
-    navigate('/'); // Redirige a la página principal sin validar
+    navigate('/feed'); // Redirige directamente al feed
   };
 
   return (

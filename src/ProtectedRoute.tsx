@@ -18,13 +18,12 @@ export default ProtectedRoute;
 import { Navigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
-  isAuthenticated: boolean;
   children: React.ReactNode;
 }
 
-const ProtectedRoute = ({ isAuthenticated, children }: ProtectedRouteProps) => {
-  // Elimina la condición que bloquea la navegación
-  return <>{children}</>;
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  // Redirigir a la página de bienvenida sin comprobar autenticación
+  return <Navigate to="/auth/welcome" />;
 };
 
 export default ProtectedRoute;

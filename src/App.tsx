@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Layout/Navbar';
 import LeftSidebar from './components/Layout/LeftSidebar';
 import RightSidebar from './components/Layout/RightSidebar';
@@ -15,54 +15,53 @@ import { MarketAgent } from './components/agents/MarketAgent';
 import { MarketingAgent } from './components/agents/MarketingAgent';
 import AuthRoutes from './AuthRoutes';
 import { useEffect } from 'react';
-import useStore from './components/store/login.store';
-import ProtectedRoute from './ProtectedRoute';
-
+import Welcome from './pages/Welcome'; // Importamos la página Welcome
 
 function App() {
-  const { isAuthenticated, checkAuthentication } = useStore();
-
-  // Verificar autenticación al cargar la app
-  useEffect(() => {
-    checkAuthentication();
-  }, [checkAuthentication]);
-
   return (
     <BrowserRouter>
       <Routes>
+        {/* Página de bienvenida que aparece primero */}
+        <Route path="/" element={<Navigate to="/auth/welcome" />} />
+        
+        {/* Página de bienvenida */}
+        <Route path="/auth/welcome" element={<Welcome />} />
+
+        {/* Ruta de autenticación (aunque no la necesites, la dejas para rutas específicas) */}
         <Route path="/auth/*" element={<AuthRoutes />} />
+
+        {/* Rutas del Feed y otras secciones */}
         <Route
           path="*"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <>
-                <Navbar />
-                <div className="pt-16 flex justify-center sm:justify-start">
-                  <div className="hidden sm:block">
-                    <LeftSidebar />
-                  </div>
-                  <main className="flex-1 w-full sm:w-auto sm:ml-64 sm:mr-64 px-4 sm:px-0">
-                    <Layout>
-                      <Routes>
-                        <Route path="/" element={<Feed />} />
-                        <Route path="/events" element={<Events />} />
-                        <Route path="/forum" element={<Forum />} />
-                        <Route path="/store" element={<Store />} />
-                        <Route path="/product/:id" element={<ProductDetail />} />
-                        <Route path="/chat" element={<Chat />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/agent/financial" element={<FinancialAgent />} />
-                        <Route path="/agent/market" element={<MarketAgent />} />
-                        <Route path="/agent/marketing" element={<MarketingAgent />} />
-                      </Routes>
-                    </Layout>
-                  </main>
-                  <div className="hidden sm:block">
-                    <RightSidebar />
-                  </div>
+            <>
+              {/* Este layout incluye Navbar, LeftSidebar, RightSidebar */}
+              <Navbar />
+              <div className="pt-16 flex justify-center sm:justify-start">
+                <div className="hidden sm:block">
+                  <LeftSidebar />
                 </div>
-              </>
-            </ProtectedRoute>
+                <main className="flex-1 w-full sm:w-auto sm:ml-64 sm:mr-64 px-4 sm:px-0">
+                  <Layout>
+                    <Routes>
+                      <Route path="/feed" element={<Feed />} />
+                      <Route path="/events" element={<Events />} />
+                      <Route path="/forum" element={<Forum />} />
+                      <Route path="/store" element={<Store />} />
+                      <Route path="/product/:id" element={<ProductDetail />} />
+                      <Route path="/chat" element={<Chat />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/agent/financial" element={<FinancialAgent />} />
+                      <Route path="/agent/market" element={<MarketAgent />} />
+                      <Route path="/agent/marketing" element={<MarketingAgent />} />
+                    </Routes>
+                  </Layout>
+                </main>
+                <div className="hidden sm:block">
+                  <RightSidebar />
+                </div>
+              </div>
+            </>
           }
         />
       </Routes>
@@ -71,7 +70,6 @@ function App() {
 }
 
 export default App;
-
 
 
 
